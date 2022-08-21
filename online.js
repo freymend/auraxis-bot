@@ -63,7 +63,7 @@ const onlineInfo = async function(oTag, platform, outfitID = null, locale = "en-
 	for(const i in data.members){
 		if(data.members[i].online_status > 0){
 			resObj.onlineCount += 1;
-			onlineMembers[Number.parseInt(data.members[i].rank_ordinal)-pcModifier].push("["+data.members[i].name.first+"]("+urlBase+data.members[i].name.first+")");
+			onlineMembers[Number.parseInt(data.members[i].rank_ordinal)-pcModifier].push(`[${data.members[i].name.first}](${urlBase+data.members[i].name.first})`);
 		}
 		if(pcModifier == 0 && rankNames[Number.parseInt(data.members[i].rank_ordinal)] == ""){
 			rankNames[Number.parseInt(data.members[i].rank_ordinal)] = data.members[i].rank;
@@ -114,32 +114,33 @@ module.exports = {
 		resEmbed.setTitle(oInfo.name);
 		resEmbed.setThumbnail(`https://www.outfit-tracker.com/outfit-logo/${oInfo.outfitID}.png`);
 		resEmbed.setFooter({text: i18n.__({phrase: "outfitDecalSource", locale: locale})});
-		resEmbed.setDescription(oInfo.alias+"\n"+i18n.__mf({phrase: "{online}/{total} online", locale: locale}, 
-		{online: oInfo.onlineCount, total: oInfo.memberCount}));
+		resEmbed.setDescription(`${oInfo.alias}\n${i18n.__mf({phrase: "{online}/{total} online", locale: locale}, 
+		{online: oInfo.onlineCount, total: oInfo.memberCount})}`
+		);
 		resEmbed.setTimestamp();
 		if(platform == 'ps2:v2'){
-			resEmbed.setURL('http://ps2.fisu.pw/outfit/?name='+oInfo.alias);
+			resEmbed.setURL(`http://ps2.fisu.pw/outfit/?name=${oInfo.alias}`);
 		}
 		else if(platform == 'ps2ps4us:v2'){
-			resEmbed.setURL('http://ps4us.ps2.fisu.pw/outfit/?name='+oInfo.alias);
+			resEmbed.setURL(`http://ps4us.ps2.fisu.pw/outfit/?name=${oInfo.alias}`);
 		}
 		else if(platform == 'ps2ps4eu:v2'){
-			resEmbed.setURL('http://ps4eu.ps2.fisu.pw/outfit/?name='+oInfo.alias);
+			resEmbed.setURL(`http://ps4eu.ps2.fisu.pw/outfit/?name=${oInfo.alias}`);
 		}
 		resEmbed.setColor(faction(oInfo.faction).color)
 		if(oInfo.onlineCount === -1){
 			resEmbed.addField(i18n.__({phrase: "Online member count unavailable", locale: locale}), "-", true);
-			resEmbed.setDescription(oInfo.alias+"\n"+"?/"+oInfo.memberCount+" online");
+			resEmbed.setDescription(`${oInfo.alias}\n?/${oInfo.memberCount}+ online`);
 
 			return resEmbed;
 		}
 		for(let i = 0; i < 8; i++){
 			if(oInfo.onlineMembers[i].length > 0){
 				if(totalLength(oInfo.onlineMembers[i]) <= 1024){
-					resEmbed.addField(oInfo.rankNames[i]+" ("+oInfo.onlineMembers[i].length+")", `${oInfo.onlineMembers[i]}`.replace(/,/g, '\n'), true);
+					resEmbed.addField(`${oInfo.rankNames[i]} (${oInfo.onlineMembers[i].length})`, `${oInfo.onlineMembers[i]}`.replace(/,/g, '\n'), true);
 				}
 				else{
-					resEmbed.addField(oInfo.rankNames[i]+" ("+oInfo.onlineMembers[i].length+")", i18n.__({phrase: "Too many to display", locale: locale}), true);
+					resEmbed.addField(`${oInfo.rankNames[i]} (${oInfo.onlineMembers[i].length})`, i18n.__({phrase: "Too many to display", locale: locale}), true);
 				}
 			}
 		}

@@ -200,10 +200,10 @@ module.exports = {
             const trPc = localeNumber((terObj[continent].tr/Total)*100, locale);
             const owningFaction = faction(terObj[continent].locked);
             if(terObj[continent].locked != -1){
-                resEmbed.addField(`${i18n.__({phrase: continent, locale: locale})} ${owningFaction.decal}`, i18n.__mf({phrase: "Locked {timestamp} ({relative})", locale: locale}, {timestamp: `<t:${timestamp}:t>`, relative: `<t:${timestamp}:R>`})+"\n"+continentBenefit(continent, locale));
+                resEmbed.addField(`${i18n.__({phrase: continent, locale: locale})} ${owningFaction.decal}`, `${i18n.__mf({phrase: "Locked {timestamp} ({relative})", locale: locale}, {timestamp: `<t:${timestamp}:t>`, relative: `<t:${timestamp}:R>`})}\n${continentBenefit(continent, locale)}`);
             }
             else if(terObj[continent].unstable){
-                resEmbed.addField(i18n.__({phrase: continent, locale: locale})+' <:Unstable:1000661319663497217>', `\
+                resEmbed.addField(`${i18n.__({phrase: continent, locale: locale})} <:Unstable:1000661319663497217>`, `\
                 \n${i18n.__mf({phrase: "Unlocked {timestamp} ({relative})", locale: locale}, {timestamp: `<t:${timestamp}:t>`, relative: `<t:${timestamp}:R>`})}\
                 \n*${i18n.__({phrase: "currentlyUnstable", locale: locale})}*\
                 \n<:VS:818766983918518272> **${i18n.__({phrase: "VS", locale: locale})}**: ${terObj[continent].vs}  |  ${vsPc}%\

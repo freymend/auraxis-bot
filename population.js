@@ -23,7 +23,7 @@ const getPopulation = async function(world){
 		url = 'http://ps4us.ps2.fisu.pw/api/population/?world=1000';
 	}
 	else{
-		url = 'http://ps2.fisu.pw/api/population/?world='+world;
+		url = `http://ps2.fisu.pw/api/population/?world=${world}`;
 	}
 	try{
 		let response = await got(url).json();
@@ -68,7 +68,7 @@ const fisuPopulation = function(serverID){
 		return 'http://ps4us.ps2.fisu.pw/activity/?world=1000';
 	}
 	else{
-		return 'http://ps2.fisu.pw/activity/?world='+serverID;
+		return `http://ps2.fisu.pw/activity/?world=${serverID}`;
 	}
 }
 

@@ -279,7 +279,7 @@ module.exports = {
             }
         }
 
-        throw "Already subscribed to "+user+" Twitter";
+        throw `Already subscribed to ${user} Twitter`;
     },
 
     /**

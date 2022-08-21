@@ -162,13 +162,13 @@ module.exports = {
 		if(oInfo.alias != ""){
 			resEmbed.setDescription(oInfo.alias);
 			if(platform == 'ps2:v2'){
-				resEmbed.setURL('http://ps2.fisu.pw/outfit/?name='+oInfo.alias);
+				resEmbed.setURL(`http://ps2.fisu.pw/outfit/?name=${oInfo.alias}`);
 			}
 			else if(platform == 'ps2ps4us:v2'){
-				resEmbed.setURL('http://ps4us.ps2.fisu.pw/outfit/?name='+oInfo.alias);
+				resEmbed.setURL(`http://ps4us.ps2.fisu.pw/outfit/?name=${oInfo.alias}`);
 			}
 			else if(platform == 'ps2ps4eu:v2'){
-				resEmbed.setURL('http://ps4eu.ps2.fisu.pw/outfit/?name='+oInfo.alias);
+				resEmbed.setURL(`http://ps4eu.ps2.fisu.pw/outfit/?name=${oInfo.alias}`);
 			}
 		}
 		resEmbed.addField(i18n.__({phrase: "Founded", locale: locale}), `<t:${oInfo.timeCreated}:D>`, true);
@@ -177,9 +177,9 @@ module.exports = {
 		const weekPc = localeNumber((oInfo.onlineWeek/oInfo.memberCount)*100, locale);
 		const monthPc = localeNumber((oInfo.onlineMonth/oInfo.memberCount)*100, locale);
 		resEmbed.addField(i18n.__({phrase: "Online", locale: locale}), `${oInfo.onlineMembers}`, true);
-		resEmbed.addField(i18n.__({phrase: "Last day", locale: locale}), localeNumber(oInfo.onlineDay, locale)+" ("+dayPc+"%)", true);
-		resEmbed.addField(i18n.__({phrase: "Last week", locale: locale}), localeNumber(oInfo.onlineWeek, locale)+" ("+weekPc+"%)", true);
-		resEmbed.addField(i18n.__({phrase: "Last month", locale: locale}), localeNumber(oInfo.onlineMonth, locale)+" ("+monthPc+"%)", true);
+		resEmbed.addField(i18n.__({phrase: "Last day", locale: locale}), `${localeNumber(oInfo.onlineDay, locale)} (${dayPc}%)`, true);
+		resEmbed.addField(i18n.__({phrase: "Last week", locale: locale}), `${localeNumber(oInfo.onlineWeek, locale)} (${weekPc}%)`, true);
+		resEmbed.addField(i18n.__({phrase: "Last month", locale: locale}), `${localeNumber(oInfo.onlineMonth, locale)} (${monthPc}%)`, true);
 		resEmbed.addField(i18n.__({phrase: "Server", locale: locale}), i18n.__({phrase: serverNames[Number(oInfo.worldId)], locale: locale}), true);
 
 		const factionInfo = faction(oInfo.faction);
@@ -187,13 +187,13 @@ module.exports = {
 		resEmbed.setColor(factionInfo.color);
 
 		if(platform == "ps2:v2"){
-			resEmbed.addField(i18n.__({phrase: 'Owner', locale: locale}), "["+oInfo.owner+"]("+"https://ps2.fisu.pw/player/?name="+oInfo.owner+")", true);
+			resEmbed.addField(i18n.__({phrase: 'Owner', locale: locale}), `[${oInfo.owner}](https://ps2.fisu.pw/player/?name=${oInfo.owner})`, true);
 		}
 		else if(platform == "ps2ps4us:v2"){
-			resEmbed.addField(i18n.__({phrase: 'Owner', locale: locale}), "["+oInfo.owner+"]("+"https://ps4us.ps2.fisu.pw/player/?name="+oInfo.owner+")", true);
+			resEmbed.addField(i18n.__({phrase: 'Owner', locale: locale}), `[${oInfo.owner}](https://ps4us.ps2.fisu.pw/player/?name=${oInfo.owner})`, true);
 		}
 		else if(platform == "ps2ps4eu:v2"){
-			resEmbed.addField(i18n.__({phrase: 'Owner', locale: locale}), "["+oInfo.owner+"]("+"https://ps4eu.ps2.fisu.pw/player/?name="+oInfo.owner+")", true);
+			resEmbed.addField(i18n.__({phrase: 'Owner', locale: locale}), `[${oInfo.owner}](https://ps4eu.ps2.fisu.pw/player/?name=${oInfo.owner})`, true);
 		}
 		let auraxium = 0;
 		let synthium = 0;

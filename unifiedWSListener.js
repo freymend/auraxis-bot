@@ -50,7 +50,7 @@ function listen(pgClient, discordClient){
         })
 
         pcClient.on('error', function err(error){
-            console.log("PC error: "+ error);
+            console.log(`PC error: ${error}`);
             console.log("Closing socket");
             pcClient.close();
         })
@@ -83,7 +83,7 @@ function listen(pgClient, discordClient){
         })
 
         usClient.on('error', function err(error){
-            console.log("US error: "+ error);
+            console.log(`US error: ${error}`);
             console.log("Closing socket");
             usClient.close();
         })
@@ -116,7 +116,7 @@ function listen(pgClient, discordClient){
         })
 
         euClient.on('error', function err(error){
-            console.log("EU error: "+ error);
+            console.log(`EU error: ${error}`);
             console.log("Closing socket");
             euClient.close();
         })

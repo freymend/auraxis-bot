@@ -79,7 +79,7 @@ const token = process.env.token;
 let SQLclient = undefined;
 
 client.on('ready', async () => {
-	console.log('Running on '+client.guilds.cache.size+' servers!');
+	console.log(`Running on ${client.guilds.cache.size} servers!`);
 	if(runningOnline){
 		SQLclient = new pg.Client({
 			connectionString: process.env.DATABASE_URL,

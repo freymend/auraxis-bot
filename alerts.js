@@ -31,7 +31,7 @@ const popLevels = {
  */
 const alertInfo = async function(server, locale='en-US'){
 	try{
-		let uri = 'https://api.ps2alerts.com/instances/active?world='+server;
+		let uri = `https://api.ps2alerts.com/instances/active?world=${server}`;
 		let response = await got(uri).json();
 		if(typeof(response.error) !== 'undefined'){
 			throw response.error;
@@ -45,7 +45,7 @@ const alertInfo = async function(server, locale='en-US'){
 		let allAlerts = [];
 		for(let alert of response){
 			if(typeof(alerts[alert.censusMetagameEventType]) === 'undefined'){
-				console.log("Unable to find alert info for id "+alert.censusMetagameEventType);
+				console.log(`Unable to find alert info for id ${alert.censusMetagameEventType}`);
 				throw "Alert lookup error";
 			}
 			let now = Date.now();
@@ -97,11 +97,11 @@ module.exports = {
 			throw err;
 		}
 		let sendEmbed = new Discord.MessageEmbed();
-		sendEmbed.setTitle(serverNames[serverID]+" alerts");
+		sendEmbed.setTitle(`${serverNames[serverID]} alerts`);
 		sendEmbed.setFooter({text: i18n.__mf({phrase: "Data from {site}", locale: locale}, {site: "ps2alerts.com"})});
 		sendEmbed.setTimestamp();
 		for(const x in alertObj){
-			sendEmbed.addField(alertObj[x].name, "["+alertObj[x].description+"](https://ps2alerts.com/alert/"+alertObj[x].instanceId+"?utm_source=auraxis-bot&utm_medium=discord&utm_campaign=partners)");
+			sendEmbed.addField(alertObj[x].name, `[${alertObj[x].description}](https://ps2alerts.com/alert/${alertObj[x].instanceId}?utm_source=auraxis-bot&utm_medium=discord&utm_campaign=partners)`);
 			sendEmbed.addField(i18n.__({phrase: "Start time", locale: locale}), `<t:${alertObj[x].timeStart}:t>`, true);
 			sendEmbed.addField(i18n.__({phrase: "Time left", locale: locale}), 
 			i18n.__mf({phrase: "Ends {time}", locale: locale}, {time: `<t:${alertObj[x].timeEnd}:R>`}), true);

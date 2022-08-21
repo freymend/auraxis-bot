@@ -104,7 +104,7 @@ const basicInfo = async function(cName, platform){
                 resObj.topWeaponName = await getWeaponName(topID, platform);
             }
             catch{
-                console.log("Error retrieving top weapon name for id "+topID);
+                console.log(`Error retrieving top weapon name for id ${topID}`);
                 resObj.topWeaponName = "Error";
             }
             if(mostKills > 100){
@@ -260,7 +260,7 @@ const getWeaponName = async function(ID, platform){
     if(response.length==1){
         return response.item_list[0].name.en;
     }
-    let URI = 'https://ps2.fisu.pw/api/weapons/?id='+ID; //Fallback Fisu URI
+    let URI = `https://ps2.fisu.pw/api/weapons/?id=${ID}`; //Fallback Fisu URI
     let fisuResponse = await got(URI).json();
     if(typeof(fisuResponse[ID]) !== 'undefined'){
         return fisuResponse[ID].name;
@@ -407,18 +407,18 @@ module.exports = {
             resEmbed.setDescription(cInfo.title);
         }
         if(platform == 'ps2:v2'){
-            resEmbed.setURL('http://ps2.fisu.pw/player/?name='+cName);
+            resEmbed.setURL(`http://ps2.fisu.pw/player/?name=${cName}`);
         }
         else if(platform == 'ps2ps4us:v2'){
-            resEmbed.setURL('http://ps4us.ps2.fisu.pw/player/?name='+cName);
+            resEmbed.setURL(`http://ps4us.ps2.fisu.pw/player/?name=${cName}`);
         }
         else if(platform == 'ps2ps4eu:v2'){
-            resEmbed.setURL('http://ps4eu.ps2.fisu.pw/player/?name='+cName);
+            resEmbed.setURL(`http://ps4eu.ps2.fisu.pw/player/?name=${cName}`);
         }
         
         // BR & ASP
         if(cInfo.prestige > 0){
-            resEmbed.addField(i18n.__({phrase: 'BR', locale: locale}), cInfo.br+"~"+cInfo.prestige, true);
+            resEmbed.addField(i18n.__({phrase: 'BR', locale: locale}), `${cInfo.br}~${cInfo.prestige}`, true);
         }
         else{
             resEmbed.addField(i18n.__({phrase: 'BR', locale: locale}), cInfo.br, true);
@@ -449,7 +449,7 @@ module.exports = {
 
         // Score, SPM
         if(cInfo.stat_history){
-            resEmbed.addField(i18n.__({phrase: 'Score (SPM)', locale: locale}), parseInt(cInfo.score).toLocaleString(locale)+" ("+localeNumber(cInfo.score/cInfo.playTime, locale)+")", true);
+            resEmbed.addField(i18n.__({phrase: 'Score (SPM)', locale: locale}), `${parseInt(cInfo.score).toLocaleString(locale)} (${localeNumber(cInfo.score/cInfo.playTime, locale)})`, true);
         }
 
         // Server
@@ -496,13 +496,13 @@ module.exports = {
         // Outfit info
         if(cInfo.inOutfit){
             if(cInfo.outfitAlias != "" && platform == 'ps2:v2'){
-                resEmbed.addField(i18n.__({phrase: 'Outfit', locale: locale}), '[['+cInfo.outfitAlias+']](https://ps2.fisu.pw/outfit/?name='+cInfo.outfitAlias+') '+cInfo.outfitName, true);
+                resEmbed.addField(i18n.__({phrase: 'Outfit', locale: locale}), `[[${cInfo.outfitAlias}]](https://ps2.fisu.pw/outfit/?name=${cInfo.outfitAlias}) ${cInfo.outfitName}`, true);
             }
             else if(cInfo.outfitAlias != "" && platform == 'ps2ps4us:v2'){
-                resEmbed.addField(i18n.__({phrase: 'Outfit', locale: locale}), '[['+cInfo.outfitAlias+']](https://ps4us.ps2.fisu.pw/outfit/?name='+cInfo.outfitAlias+') '+cInfo.outfitName, true);
+                resEmbed.addField(i18n.__({phrase: 'Outfit', locale: locale}), `[[${cInfo.outfitAlias}]](https://ps4us.ps2.fisu.pw/outfit/?name=${cInfo.outfitAlias}) ${cInfo.outfitName}`, true);
             }
             else if(cInfo.outfitAlias != "" && platform == 'ps2ps4eu:v2'){
-                resEmbed.addField(i18n.__({phrase: 'Outfit', locale: locale}), '[['+cInfo.outfitAlias+']](https://ps4eu.ps2.fisu.pw/outfit/?name='+cInfo.outfitAlias+') '+cInfo.outfitName, true);
+                resEmbed.addField(i18n.__({phrase: 'Outfit', locale: locale}), `[[${cInfo.outfitAlias}]](https://ps4eu.ps2.fisu.pw/outfit/?name=${cInfo.outfitAlias}) ${cInfo.outfitName}`, true);
             }
             else{
                 resEmbed.addField(i18n.__({phrase: 'Outfit', locale: locale}), cInfo.outfitName, true);
@@ -519,7 +519,7 @@ module.exports = {
         // Top Weapon, Auraxium medals
         if(cInfo.stats){
             if(cInfo.topWeaponName != "Error"){
-                resEmbed.addField(i18n.__({phrase: 'Top Weapon (kills)', locale: locale}), cInfo.topWeaponName+" ("+localeNumber(cInfo.mostKills, locale)+")", true);
+                resEmbed.addField(i18n.__({phrase: 'Top Weapon (kills)', locale: locale}), `${cInfo.topWeaponName} (${localeNumber(cInfo.mostKills, locale)})`, true);
             }
             if(cInfo.auraxCount != "Error"){
                 resEmbed.addField(i18n.__({phrase: 'Auraxium Medals', locale: locale}), `${cInfo.auraxCount}`, true);
