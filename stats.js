@@ -135,7 +135,7 @@ const characterInfo = async function(cName, wName, platform, locale="en-US"){
         throw i18n.__mf({phrase: "{name} not found", locale: locale}, {name: cName});
 	}
 	let data = response[0];
-	if(typeof(data.stats) === 'undefined' || typeof(data.stats.weapon_stat) === 'undefined' || typeof(data.stats.weapon_stat_by_faction) === 'undefined'){
+	if(data.stats === undefined || data.stats.weapon_stat === undefined || data.stats.weapon_stat_by_faction === undefined){
 		throw i18n.__({phrase: "Unable to retrieve weapon stats", locale: locale});
 	}
 	let resObj = {

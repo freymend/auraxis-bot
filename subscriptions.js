@@ -47,7 +47,7 @@ const standardizeName = function(server){
  */
 const outfitInfo = async function(tag, platform){
     const response = await censusRequest(platform, 'outfit_list', `/outfit?alias_lower=${tag.toLowerCase()}&c:join=character^on:leader_character_id^to:character_id`);
-    if(typeof(response[0]) != undefined && response[0]){
+    if(response[0] !== undefined){
         let resObj = {
             ID: response[0].outfit_id,
             faction: response[0].leader_character_id_join_character.faction_id,

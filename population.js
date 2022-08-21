@@ -27,7 +27,7 @@ const getPopulation = async function(world){
 	}
 	try{
 		let response = await got(url).json();
-		if(typeof(response.error) !== 'undefined'){
+		if(response.error !== undefined){
 			throw response.error;
 		}
 		if(response.statusCode == 404){

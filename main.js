@@ -57,11 +57,11 @@ require('dotenv').config();
 let runningOnline = false;
 let twitterAvail = false;
 
-if(typeof(process.env.DATABASE_URL) !== 'undefined'){
+if(process.env.DATABASE_URL !== undefined){
 	runningOnline = true;
 }
 
-if(typeof(process.env.TWITTER_CONSUMER_KEY) !== 'undefined'){
+if(process.env.TWITTER_CONSUMER_KEY !== undefined){
 	twitterAvail = true;
 }
 

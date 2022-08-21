@@ -83,7 +83,7 @@ async function censusRequest(platform, key, extension){
 	const uri = `https://census.daybreakgames.com/s:${process.env.serviceID}/get/${platform}/${extension}`;
 	try{
 		const response = await got(uri).json();
-		if(typeof(response.error) !== 'undefined'){
+		if(response.error !== undefined){
 			if(response.error == 'service_unavailable'){
 				throw "Census API currently unavailable";
 			}
@@ -92,13 +92,13 @@ async function censusRequest(platform, key, extension){
 			}
 			throw response.error;
 		}
-		if(typeof(response.errorCode) !== 'undefined'){
+		if(response.errorCode !== undefined){
 			if(response.errorCode == "SERVER_ERROR" && response.errorMessage){
 				throw `Census API server error: ${response.errorMessage}`;
 			}
 			throw `Census API error: ${response.errorCode}`;
 		}
-		if(typeof(response[key]) === 'undefined'){
+		if(response[key] === undefined){
 			throw "Census API error: undefined response";
 		}
 		return response[key];

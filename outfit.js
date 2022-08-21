@@ -26,7 +26,7 @@ const basicInfo = async function(oTag, platform, oID, locale="en-US"){
 		throw i18n.__mf({phrase: '{name} not found', locale: locale}, {name: oTag});
 	}
 	let data = response[0];
-	if(typeof(data.leader_character_id_join_character) === 'undefined'){
+	if(data.leader_character_id_join_character === undefined){
 		throw i18n.__({phrase: 'Outfit found, but some information is missing.  Please try again or contact the developer if the issue persists.', locale: locale});
 	}
 	let resObj = {
@@ -42,7 +42,7 @@ const basicInfo = async function(oTag, platform, oID, locale="en-US"){
 		outfitID: data.outfit_id,
 		timeCreated: data.time_created
 	};
-	if(typeof(data.leader_character_id_join_characters_world) !== 'undefined'){
+	if(data.leader_character_id_join_characters_world !== undefined){
 		resObj.worldId = data.leader_character_id_join_characters_world.world_id;
 	}
 
@@ -64,7 +64,7 @@ const basicInfo = async function(oTag, platform, oID, locale="en-US"){
 			resObj["onlineWeek"] += 1;
 			resObj["onlineMonth"] += 1;
 		}
-		else if(typeof(data.members[i].members_character_id_join_character) === 'undefined'){
+		else if(data.members[i].members_character_id_join_character === undefined){
 			continue;
 		}
 		else if(now - data.members[i].members_character_id_join_character.times.last_login <= 86400){

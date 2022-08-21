@@ -41,20 +41,20 @@ const onlineInfo = async function(oTag, platform, outfitID = null, locale = "en-
 		world: data.leader_character_id_join_characters_world.world_id,
 		outfitID: data.outfit_id
 	};
-	if(typeof(data.leader_character_id_join_character) !== 'undefined'){
+	if(data.leader_character_id_join_character !== undefined){
 		resObj.faction = data.leader_character_id_join_character.faction_id;
 	}
 	if(data.members[0].online_status == "service_unavailable"){
 		resObj.onlineCount = -1;
 		return resObj;
 	}
-	if(typeof(data.members[0].name) === 'undefined'){
+	if(data.members[0].name === undefined){
 		throw "API error: names not returned";
 	}
 	let pcModifier = 0;
 	let rankNames = ["","","","","","","",""];
 	let onlineMembers = [[],[],[],[],[],[],[],[]];
-	if(typeof(data.ranks) !== 'undefined'){
+	if(data.ranks !== undefined){
 		pcModifier = 1;
 		for(let rank of data.ranks){
 			rankNames[Number.parseInt(rank.ordinal)-pcModifier] = rank.name;

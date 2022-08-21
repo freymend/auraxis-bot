@@ -33,7 +33,7 @@ const alertInfo = async function(server, locale='en-US'){
 	try{
 		let uri = `https://api.ps2alerts.com/instances/active?world=${server}`;
 		let response = await got(uri).json();
-		if(typeof(response.error) !== 'undefined'){
+		if(response.error !== undefined){
 			throw response.error;
 		}
 		if(response.statusCode == 404){
@@ -44,7 +44,7 @@ const alertInfo = async function(server, locale='en-US'){
 		}
 		let allAlerts = [];
 		for(let alert of response){
-			if(typeof(alerts[alert.censusMetagameEventType]) === 'undefined'){
+			if(alerts[alert.censusMetagameEventType] === undefined){
 				console.log(`Unable to find alert info for id ${alert.censusMetagameEventType}`);
 				throw "Alert lookup error";
 			}
@@ -70,7 +70,7 @@ const alertInfo = async function(server, locale='en-US'){
 		return allAlerts;
 	}
 	catch(err){
-		if(typeof(err) == 'string'){
+		if(err == string){
 			throw err;
 		}
 		else{

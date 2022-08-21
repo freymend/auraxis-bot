@@ -82,10 +82,10 @@ module.exports = {
         if(response.length < 3){
             throw "API response missing continents";
         }
-        if(typeof(response[0]) === 'undefined'){
+        if(response[0] === undefined){
             throw "API response improperly formatted";
         }
-        if(typeof(response[0].Regions) === 'undefined'){
+        if(response[0].Regions === undefined){
             throw "API response missing Regions field";
         }
         let IndarObj = {vs:0, nc:0, tr:0, locked:-1, unstable:false};

@@ -42,7 +42,7 @@ const weaponInfo = async function(name){
 	name = name.replace(/[“”]/g, '"');
 
 	//Check if ID matches
-	if(typeof(weaponsJSON[name]) !== 'undefined'){
+	if(weaponsJSON[name] !== undefined){
 		let returnObj = weaponsJSON[name];
 		returnObj.id = name;
 		return returnObj;
@@ -119,23 +119,23 @@ module.exports = {
 		resEmbed.setTitle(wInfo.name);
 		wInfo.image_id != -1 && resEmbed.setThumbnail(`http://census.daybreakgames.com/files/ps2/images/static/${wInfo.image_id}.png`);
 		
-		if(typeof(wInfo.category) !== 'undefined'){
+		if(wInfo.category !== undefined){
 			resEmbed.addField(i18n.__({phrase: "Category", locale: locale}), wInfo.category, true);
 		}
 
-		if(typeof(wInfo.fireRate) !== 'undefined'){
+		if(wInfo.fireRate !== undefined){
 			if(wInfo.fireRate != 0 && wInfo.clip != 1){
 				resEmbed.addField(i18n.__({phrase: "Fire Rate", locale: locale}), localeNumber(60*(1000/wInfo.fireRate), locale), true);
 			}
 		}
-		if(typeof(wInfo.heatCapacity) !== 'undefined'){
+		if(wInfo.heatCapacity !== undefined){
 			resEmbed.addField(i18n.__({phrase: "Heat Capacity", locale: locale}), `${wInfo.heatCapacity}`, true);
 			resEmbed.addField(i18n.__({phrase: "Heat Per Shot", locale: locale}), `${wInfo.heatPerShot}`, true);
 			resEmbed.addField(i18n.__({phrase: "Heat Bleed Off", locale: locale}), `${wInfo.heatBleedOff}/s`, true);
 			resEmbed.addField(i18n.__({phrase: "Recovery Delay", locale: locale}), `${wInfo.heatRecoveryDelay/1000} s\n${(Number(wInfo.overheatPenalty)+Number(wInfo.heatRecoveryDelay))/1000} s Overheated`, true);
 		}
-		else if (typeof(wInfo.clip) !== 'undefined' && wInfo.clip != 1){
-			if(typeof(wInfo.ammo) !== 'undefined' && wInfo.ammo != 1){
+		else if (wInfo.clip !== undefined && wInfo.clip != 1){
+			if(wInfo.ammo !== undefined && wInfo.ammo != 1){
 				resEmbed.addField(i18n.__({phrase: "Ammo", locale: locale}), 
 				`${i18n.__mf({phrase: "{m} magazine", locale: locale}, {m: wInfo.clip})}\n
 				${i18n.__mf({phrase: "{c} capacity", locale: locale}, {c: wInfo.ammo})}`, true);
@@ -143,8 +143,8 @@ module.exports = {
 			else{
 				resEmbed.addField(i18n.__({phrase: "Magazine", locale: locale}), wInfo.clip, true);
 			}
-			if(typeof(wInfo.reload) !== 'undefined' && wInfo.reload != 0){
-				if(typeof(wInfo.chamber) !== 'undefined' && wInfo.chamber != 0){
+			if(wInfo.reload !== undefined && wInfo.reload != 0){
+				if(wInfo.chamber !== undefined && wInfo.chamber != 0){
 					const shortReload = localeNumber(wInfo.reload/1000, locale);
 					const longReload = localeNumber(wInfo.reload/1000+wInfo.chamber/1000, locale);
 					resEmbed.addField(i18n.__({phrase: "Reload", locale: locale}), 
@@ -159,7 +159,7 @@ module.exports = {
 				}
 			}
 		}
-		else if(typeof(wInfo.reload) !== 'undefined' && wInfo.reload != 0){
+		else if(wInfo.reload !== undefined && wInfo.reload != 0){
 			resEmbed.addField(i18n.__({phrase: "Reload", locale: locale}), `${wInfo.reload/1000}s`, true);
 		}
 
@@ -188,7 +188,7 @@ module.exports = {
 				\n ${wInfo.minIndirectDamage} @ ${wInfo.minIndirectDamageRadius}m`, true);
 		}
 
-		if(typeof(wInfo.speed) !== 'undefined'){
+		if(wInfo.speed !== undefined){
 			resEmbed.addField(i18n.__({phrase: "Muzzle Velocity", locale: locale}), 
 			i18n.__mf({phrase: "{speed} m/s", locale: locale}, {speed: wInfo.speed}), true);
 		}
@@ -200,10 +200,10 @@ module.exports = {
 		let adsCOFMax = ["?","?","?","?","?","?"];
 
 		//Checking for vertical recoil here and below keeps things like med kits from displaying irrelevant stats
-		if(typeof(wInfo.adsCofRecoil) !== 'undefined' && typeof(wInfo.hipCofRecoil) !== 'undefined' && typeof(wInfo.verticalRecoil) !== 'undefined'){ 
+		if(wInfo.adsCofRecoil !== undefined && wInfo.hipCofRecoil !== undefined && wInfo.verticalRecoil !== undefined){ 
 			resEmbed.addField(i18n.__({phrase: "Bloom (hip/ADS)", locale: locale}), `${wInfo.hipCofRecoil}/${wInfo.adsCofRecoil}`, true);
 		}
-		else if(typeof(wInfo.hipCofRecoil) !== 'undefined' && typeof(wInfo.verticalRecoil) !== 'undefined'){
+		else if(wInfo.hipCofRecoil !== undefined && wInfo.verticalRecoil !== undefined){
 			resEmbed.addField(i18n.__({phrase: "Bloom (hip)", locale: locale}), `${wInfo.hipCofRecoil}`, true);
 		}
 		wInfo.verticalRecoil != undefined && resEmbed.addField(i18n.__({phrase: "Vertical Recoil", locale: locale}), `${wInfo.verticalRecoil}`, true);
@@ -215,56 +215,56 @@ module.exports = {
 		wInfo.headshotMultiplier != undefined && resEmbed.addField(i18n.__({phrase: "Headshot Multiplier", locale: locale}), `${Number(wInfo.headshotMultiplier)+1}x`, true);
 		wInfo.defZoom != undefined && wInfo.defZoom != 1 && resEmbed.addField(i18n.__({phrase: "Iron Sights Zoom", locale: locale}), `${wInfo.defZoom}x`, true);
 
-		if(typeof(wInfo.verticalRecoil) !== 'undefined'){
-			if(typeof(wInfo.standingCofMin) !== 'undefined'){
+		if(wInfo.verticalRecoil !== undefined){
+			if(wInfo.standingCofMin !== undefined){
 				hipCOFMin[0] = wInfo.standingCofMin;
 				hipCOFMax[0] = wInfo.standingCofMax;
 			}
-			if(typeof(wInfo.crouchingCofMin) !== 'undefined'){
+			if(wInfo.crouchingCofMin !== undefined){
 				hipCOFMin[1] = wInfo.crouchingCofMin;
 				hipCOFMax[1] = wInfo.crouchingCofMax;
 			}
-			if(typeof(wInfo.runningCofMin) !== 'undefined'){
+			if(wInfo.runningCofMin !== undefined){
 				hipCOFMin[2] = wInfo.runningCofMin;
 				hipCOFMax[2] = wInfo.runningCofMax;
 			}
-			if(typeof(wInfo.sprintingCofMin) !== 'undefined'){
+			if(wInfo.sprintingCofMin !== undefined){
 				hipCOFMin[3] = wInfo.sprintingCofMin;
 				hipCOFMax[3] = wInfo.sprintingCofMax;
 			}
-			if(typeof(wInfo.fallingCofMin) !== 'undefined'){
+			if(wInfo.fallingCofMin !== undefined){
 				hipCOFMin[4] = wInfo.fallingCofMin;
 				hipCOFMax[4] = wInfo.fallingCofMax;
 			}
-			if(typeof(wInfo.crouchWalkingCofMin) !== 'undefined'){
+			if(wInfo.crouchWalkingCofMin !== undefined){
 				hipCOFMin[5] = wInfo.crouchWalkingCofMin;
 				hipCOFMax[5] = wInfo.crouchWalkingCofMax;
 			}
 		}
 			
-		if(typeof(wInfo.adsMoveSpeed) !== 'undefined'){
+		if(wInfo.adsMoveSpeed !== undefined){
 			resEmbed.addField(i18n.__({phrase: "ADS Move Speed", locale: locale}), `${wInfo.adsMoveSpeed}x`, true);
-			if(typeof(wInfo.standingCofMinADS) !== 'undefined'){
+			if(wInfo.standingCofMinADS !== undefined){
 				adsCOFMin[0] = wInfo.standingCofMinADS;
 				adsCOFMax[0] = wInfo.standingCofMaxADS;
 			}
-			if(typeof(wInfo.crouchingCofMinADS) !== 'undefined'){
+			if(wInfo.crouchingCofMinADS !== undefined){
 				adsCOFMin[1] = wInfo.crouchingCofMinADS;
 				adsCOFMax[1] = wInfo.crouchingCofMaxADS;
 			}
-			if(typeof(wInfo.runningCofMinADS) !== 'undefined'){
+			if(wInfo.runningCofMinADS !== undefined){
 				adsCOFMin[2] = wInfo.runningCofMinADS;
 				adsCOFMax[2] = wInfo.runningCofMaxADS;
 			}
-			if(typeof(wInfo.sprintingCofMinADS) !== 'undefined'){
+			if(wInfo.sprintingCofMinADS !== undefined){
 				adsCOFMin[3] = wInfo.sprintingCofMinADS;
 				adsCOFMax[3] = wInfo.sprintingCofMaxADS;
 			}
-			if(typeof(wInfo.fallingCofMinADS) !== 'undefined'){
+			if(wInfo.fallingCofMinADS !== undefined){
 				adsCOFMin[4] = wInfo.fallingCofMinADS;
 				adsCOFMax[4] = wInfo.fallingCofMaxADS;
 			}
-			if(typeof(wInfo.crouchWalkingCofMinADS) !== 'undefined'){
+			if(wInfo.crouchWalkingCofMinADS !== undefined){
 				adsCOFMin[5] = wInfo.crouchWalkingCofMinADS;
 				adsCOFMax[5] = wInfo.crouchWalkingCofMaxADS;
 			}

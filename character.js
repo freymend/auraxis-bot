@@ -74,7 +74,7 @@ const basicInfo = async function(cName, platform){
         let sanctionedStats = {};
 
         // Find most used weapon
-        if(typeof(data.stats.weapon_stat_by_faction) !== 'undefined'){
+        if(data.stats.weapon_stat_by_faction !== undefined){
             for (let stat of data.stats.weapon_stat_by_faction){
                 if (stat.stat_name == "weapon_kills"){
                     if(stat.item_id != "0"){
@@ -119,7 +119,7 @@ const basicInfo = async function(cName, platform){
             resObj.auraxCount = 0;
         }
         // Determine most used vehicle
-        if(typeof(data.stats.weapon_stat) !== 'undefined'){
+        if(data.stats.weapon_stat !== undefined){
             let topVehicleTime = 0;
             let favoriteVehicle = 0;
             for(let stat of data.stats.weapon_stat){
@@ -138,7 +138,7 @@ const basicInfo = async function(cName, platform){
             resObj.topVehicleTime = topVehicleTime;
         }
         // Pull stats for score, spm, and K/D
-        if(typeof(data.stats.stat_history) !== 'undefined'){
+        if(data.stats.stat_history !== undefined){
             resObj.stat_history = true;
             for(let stat of data.stats.stat_history){
                 switch(stat.stat_name){
@@ -179,7 +179,7 @@ const basicInfo = async function(cName, platform){
         resObj.infantryHits = infantryHits;
         
     }
-    if(typeof(data.character_id_join_characters_stat) !== 'undefined'){
+    if(data.character_id_join_characters_stat !== undefined){
         let topClass = 0;
         let topTime = 0;
         for(let stat of data.character_id_join_characters_stat){
@@ -253,7 +253,7 @@ const includeInIVI = function(ID){
  */
 const getWeaponName = async function(ID, platform){
     // Returns the name of the weapon ID specified.  If the Census API is unreachable it will fall back to the fisu api
-    if(typeof(weapons[ID]) !== 'undefined'){
+    if(weapons[ID] !== undefined){
         return weapons[ID].name;
     }
     let response = await censusRequest(platform, 'item_list', `/item/${ID}`)
@@ -262,7 +262,7 @@ const getWeaponName = async function(ID, platform){
     }
     let URI = `https://ps2.fisu.pw/api/weapons/?id=${ID}`; //Fallback Fisu URI
     let fisuResponse = await got(URI).json();
-    if(typeof(fisuResponse[ID]) !== 'undefined'){
+    if(fisuResponse[ID] !== undefined){
         return fisuResponse[ID].name;
     }
     if(ID in sanction){
@@ -280,7 +280,7 @@ const getWeaponName = async function(ID, platform){
  * @throws if vehicle cannot be found
  */
 const getVehicleName = async function(ID, platform){
-    if(typeof(vehicles[ID]) !== 'undefined'){
+    if(vehicles[ID] !== undefined){
         return vehicles[ID].name;
     }
     let response = await censusRequest(platform, 'vehicle_list', `/vehicle/${ID}`);
@@ -301,7 +301,7 @@ const getAuraxiumCount = async function(cName, platform){
     // Calculates the number of Auraxium medals a specified character has
     let response = await censusRequest(platform, 'character_list', `/character?name.first_lower=${cName}&c:join=characters_achievement^list:1^outer:0^hide:character_id%27earned_count%27start%27finish%27last_save%27last_save_date%27start_date(achievement^terms:repeatable=0^outer:0^show:name.en%27description.en)`);
     let medalCount = 0;
-    if(typeof(response) === 'undefined' || typeof(response[0]) === 'undefined'){
+    if(response === undefined || response[0] === undefined){
         return "Error"; // TODO: Verify if resolve is correct
     }
     let achievementList = response[0].character_id_join_characters_achievement;
@@ -470,7 +470,7 @@ module.exports = {
         }
 
         // IVI Score
-        if(typeof(cInfo.infantryHeadshots) !== 'undefined' && typeof(cInfo.infantryHits) !== 'undefined'){
+        if(cInfo.infantryHeadshots !== undefined && cInfo.infantryHits !== undefined){
             let accuracy = cInfo.infantryHits/cInfo.infantryShots;
             let hsr = cInfo.infantryHeadshots/cInfo.infantryKills;
             resEmbed.addField(i18n.__({phrase: 'IVI Score', locale: locale}), `${Math.round(accuracy*hsr*10000)}`, true);
@@ -527,7 +527,7 @@ module.exports = {
         }
 
         // Top class
-        if(typeof(cInfo.topClass) !== 'undefined'){
+        if(cInfo.topClass !== undefined){
             const classHours = Math.floor(cInfo.topTime/60/60);
             const classMinutes = Math.floor(cInfo.topTime/60 - classHours*60);
             let className = " ";
@@ -556,7 +556,7 @@ module.exports = {
         }
 
         // Favorite vehicle
-        if(typeof(cInfo.favoriteVehicle) !== 'undefined' && cInfo.favoriteVehicle != 0){
+        if(cInfo.favoriteVehicle !== undefined && cInfo.favoriteVehicle != 0){
             const vehicleHours = Math.floor(cInfo.topVehicleTime/60/60);
             const vehicleMinutes = Math.floor(cInfo.topVehicleTime/60 - vehicleHours*60);
             try{
