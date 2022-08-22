@@ -11,14 +11,14 @@ const i18n = require('i18n');
  * Get who is online in `oTag`
  * @param {string} oTag - outfit tag to check
  * @param {string} platform - platform the outfit is on
- * @param {string | null} outfitID - outfit ID to check
+ * @param {string | undefined} outfitID - outfit ID to check
  * @param {string} locale - locale to use
  * @returns a object containing the current online membeers of the outfit. If online member count is unavailable, object.OnlineCount will be -1.
  * @throws if outfit tag cannot be found or there was an API error
  */
-const onlineInfo = async function(oTag, platform, outfitID = null, locale = "en-US"){
+const onlineInfo = async function(oTag, platform, outfitID = undefined, locale = "en-US"){
 	let url = `/outfit?alias_lower=${oTag}&c:resolve=member_online_status,rank,member_character_name&c:join=character^on:leader_character_id^to:character_id&c:join=characters_world^on:leader_character_id^to:character_id`;
-	if(outfitID != null){
+	if(outfitID !== undefined){
 		url = `/outfit/${outfitID}?c:resolve=member_online_status,rank,member_character_name&c:join=character^on:leader_character_id^to:character_id&c:join=characters_world^on:leader_character_id^to:character_id`;
 	}
 	let response = await censusRequest(platform, 'outfit_list', url);
@@ -95,12 +95,12 @@ module.exports = {
 	 * Get the online members of an outfit
 	 * @param {string} oTag - outfit tag to check
 	 * @param {string} platform - platform the outfit is on
-	 * @param {string | null} outfitID - outfit ID to check
+	 * @param {string | undefined} outfitID - outfit ID to check
 	 * @param {string} locale - locale to use
 	 * @returns a discord embed of the online members of the outfit
 	 * @throws if `oTag` contains invalid characters or was incorrectly formatted
 	 */
-	online: async function(oTag, platform, outfitID = null, locale = "en-US"){
+	online: async function(oTag, platform, outfitID = undefined, locale = "en-US"){
 		if(badQuery(oTag)){
 			throw i18n.__({phrase: "Outfit search contains disallowed characters", locale: locale});
 		}

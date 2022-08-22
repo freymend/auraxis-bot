@@ -242,7 +242,7 @@ client.on('interactionCreate', async interaction => {
 				}
 				await interaction.deferReply();
 				const outfitLookups = await Promise.allSettled(Array.from(outfitTags, x => 
-					outfit.outfit(x, options.getString('platform') || 'ps2:v2', SQLclient, null, interaction.locale)));
+					outfit.outfit(x, options.getString('platform') || 'ps2:v2', SQLclient, undefined, interaction.locale)));
 				for(const res of outfitLookups){
 					let toSend = "";
 					if(res.status == "rejected"){
@@ -280,7 +280,7 @@ client.on('interactionCreate', async interaction => {
 				}
 				await interaction.deferReply();
 				const onlineLookups = await Promise.allSettled(Array.from(onlineTags, x => 
-					online.online(x, options.getString('platform') || 'ps2:v2', null, interaction.locale)));
+					online.online(x, options.getString('platform') || 'ps2:v2', undefined, interaction.locale)));
 				for(const res of onlineLookups){
 					let toSend = undefined;
 					if(res.status == "rejected"){

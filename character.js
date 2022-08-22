@@ -33,7 +33,7 @@ const basicInfo = async function(cName, platform){
     let resObj = {
         name: data.name.first,
         characterID: data.character_id,
-        title: null,
+        title: undefined,
         br: data.battle_rank.value,
         prestige: data.prestige_level,
         server: data.world_id,
@@ -56,10 +56,10 @@ const basicInfo = async function(cName, platform){
             // Fail silently
         }
     }
-    if(data.title_id_join_title != null){
+    if(data.title_id_join_title !== undefined){
         resObj.title = data.title_id_join_title.name.en;
     }
-    if(data.outfit_member != null){
+    if(data.outfit_member !== undefined){
         resObj.inOutfit = true;
         resObj.outfitName = data.outfit_member.name;
         resObj.outfitAlias = data.outfit_member.alias;
@@ -67,7 +67,7 @@ const basicInfo = async function(cName, platform){
         resObj.outfitRankOrdinal = data.outfit_member.member_rank_ordinal;
         resObj.outfitID = data.outfit_member.outfit_id;
     }
-    if(data.stats != null){
+    if(data.stats !== undefined){
         resObj.stats = true;
         let topID = 0;
         let mostKills = 0;
@@ -403,7 +403,7 @@ module.exports = {
 
         // Username, title, fisu url
         resEmbed.setTitle(cInfo.name);
-        if(cInfo.title != null){
+        if(cInfo.title !== undefined){
             resEmbed.setDescription(cInfo.title);
         }
         if(platform == 'ps2:v2'){

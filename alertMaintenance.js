@@ -137,7 +137,7 @@ module.exports = {
 		Promise.allSettled(results.rows.map(async row => {
 			try {
 				const response = await got(`https://api.ps2alerts.com/instances/${row.alertid}`).json();
-				await updateAlert(response, pgClient, discordClient, response.timeEnded != null);
+				await updateAlert(response, pgClient, discordClient, response.timeEnded !== undefined);
 			}
 			catch (err) {
 				if (typeof(err) !== 'string') {

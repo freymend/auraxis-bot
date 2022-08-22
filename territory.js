@@ -26,7 +26,7 @@ const fisuTerritory = function(serverID){
     else if(serverID == 2000){
         return 'https://ps4eu.ps2.fisu.pw/control/?world=2000';
     }
-    return null;
+    return undefined;
 }
 
 /**
