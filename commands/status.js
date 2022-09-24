@@ -2,10 +2,9 @@
  * This file implements functions to look up and report server status
  * @module status
  */
-
-const Discord = require('discord.js');
-const { censusRequest } = require('./utils.js');
-const i18n = require('i18n');
+import { EmbedBuilder } from 'discord.js';
+import { censusRequest } from '../utils.js';
+import i18n from 'i18n';
 
 /**
  * Get the population status of each server
@@ -41,20 +40,22 @@ async function info(){
 	return status;
 }
 
-module.exports = {
-	/**
-	 * Creates a discord embed of the current population status of each server
-	 * @param {string} locale - The locale to use
-	 * @returns a discord message of the status of each PS2 server
-	 */
-	servers: async function(locale="en-US"){
-		const status = await info();
-		const resEmbed = new Discord.MessageEmbed()
-			.setTitle(i18n.__({phrase: 'Server Status', locale: locale}));
-		for(const server in status){
-			resEmbed.addField(i18n.__({phrase: server, locale: locale}), i18n.__({phrase: status[server], locale: locale}), true);
-		}
-		resEmbed.setTimestamp();
-		return resEmbed;
+export const data = {
+	name: 'status',
+	description: 'Get the status of each server',
+};
+
+export const type = ['Base'];
+
+export async function execute(interaction, locale) {
+	const status = await info();
+	const resEmbed = new EmbedBuilder()
+		.setTitle(i18n.__({phrase: 'Server Status', locale: locale}));
+	for(const server in status){
+		resEmbed.addFields(
+			{name: i18n.__({phrase: server, locale: locale}), value: i18n.__({phrase: status[server], locale: locale}), inline: true}
+		);
 	}
+	resEmbed.setTimestamp();
+	await interaction.editReply({embeds: [resEmbed]});
 }

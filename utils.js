@@ -3,12 +3,53 @@
  * @module utils
  */
 
-const {fetch} = require('undici');
+import { fetch } from 'undici';
+
+/**
+ * All PC servers except for Jaeger
+ */
+export const pcServers = [
+	{
+		name: "Connery",
+		value: "connery"
+	},
+	{
+		name: "Miller",
+		value: "miller"
+	},
+	{
+		name: "Cobalt",
+		value: "cobalt"
+	},
+	{
+		name: "Emerald",
+		value: "emerald"
+	},
+	{
+		name: "SolTech",
+		value: "soltech"
+	}
+];
+
+export const platforms = [
+	{
+		name: 'PC',
+		value: 'ps2:v2'
+	},
+	{
+		name: 'PS4 US',
+		value: 'ps2ps4us:v2'
+	},
+	{
+		name: 'PS4 EU',
+		value: 'ps2ps4eu:v2'
+	}
+];
 
 /**
  * A list of the different servers all lowercase
  */
-const servers = [
+export const servers = [
 	"connery",
     "miller",
     "cobalt",
@@ -20,9 +61,45 @@ const servers = [
 ];
 
 /**
+ * All servers except for Jaeger
+ */
+ export const serversNoJaeger = [
+	{
+		name: "Connery",
+		value: "connery"
+	},
+	{
+		name: "Miller",
+		value: "miller"
+	},
+	{
+		name: "Cobalt",
+		value: "cobalt"
+	},
+	{
+		name: "Emerald",
+		value: "emerald"
+	},
+	{
+		name: "SolTech",
+		value: "soltech"
+	},
+	{
+		name: "Genudine",
+		value: "genudine"
+	},
+	{
+		name: "Ceres",
+		value: "ceres"
+	}
+];
+
+export const allServers = serversNoJaeger.concat([{ name: 'Jaeger', value: 'jaeger'}]);
+
+/**
  * A list of the different continents all capitalized
  */
-const continents = [
+export const continents = [
 	"Indar",
 	"Hossin",
 	"Amerish",
@@ -34,7 +111,7 @@ const continents = [
 /**
  * `continentID`: `continentName`
  */
- const continentNames = {
+export const continentNames = {
 	2: "Indar",
 	4: "Hossin",
 	6: "Amerish",
@@ -46,7 +123,7 @@ const continents = [
 /**
  * `serverID`: `serverName`
  */
-const serverNames = {
+export const serverNames = {
 	1: "Connery",
 	10: "Miller",
 	13: "Cobalt",
@@ -60,7 +137,7 @@ const serverNames = {
 /**
  * `serverName`: `serverID`
  */
-const serverIDs = {
+export const serverIDs = {
     "connery": 1,
     "miller": 10,
     "cobalt": 13,
@@ -76,7 +153,7 @@ const serverIDs = {
  * @param {string} input - string to check
  * @returns {boolean} true if input contains a disallowed character
  */
-function badQuery(input){
+export function badQuery(input){
 	// This is its own function so a single list of disallowed characters can be maintained
 	return input.match(/[<@>!+&?%*#$^()_:/\\,`~[\]{}|+=]/g) !== null;
 }
@@ -89,7 +166,7 @@ function badQuery(input){
  * @returns results of the request encoded in JSON
  * @throws if there are Census API errors
  */
-async function censusRequest(platform, key, extension, retry = 2){
+export async function censusRequest(platform, key, extension, retry = 2){
 	// Places boilerplate error checking in one location and standardizes it
 	// Allows for easily changing https to http if there is an error
 	const uri = `https://census.daybreakgames.com/s:${process.env.serviceID}/get/${platform}/${extension}`;
@@ -146,7 +223,7 @@ async function censusRequest(platform, key, extension, retry = 2){
  * @param {string} locale - locale to use e.g. en-US
  * @returns {string} locale-formatted number
  */
-function localeNumber(n, locale){
+export function localeNumber(n, locale){
 	// Standardize numbers across commands, shorten bulky function call
 	if(n >= 1000){
 		return n.toLocaleString(locale, {maximumFractionDigits: 0});
@@ -165,7 +242,7 @@ function localeNumber(n, locale){
  * @param {string} factionID - faction ID to get information of
  * @returns {faction} `faction` object
  */
-function faction(factionID){
+export function faction(factionID){
 	/**
 	 * @typedef {Object} faction
 	 * @property {import('discord.js').ColorResolvable} color - faction color
@@ -175,24 +252,12 @@ function faction(factionID){
 	 */
 	switch (String(factionID)){
 		case "1":
-			return {color: 'PURPLE', decal: '<:VS:818766983918518272>', initial: 'VS', tracker: '🟣'};
+			return {color: 'Purple', decal: '<:VS:818766983918518272>', initial: 'VS', tracker: '🟣'};
 		case "2":
-			return {color: 'BLUE', decal: '<:NC:818767043138027580>', initial: 'NC', tracker: '🔵'};
+			return {color: 'Blue', decal: '<:NC:818767043138027580>', initial: 'NC', tracker: '🔵'};
 		case "3":
-			return {color: 'RED', decal: '<:TR:818988588049629256>', initial: 'TR', tracker: '🔴'};
+			return {color: 'Red', decal: '<:TR:818988588049629256>', initial: 'TR', tracker: '🔴'};
 		default:
-			return {color: 'GREY', decal: '<:NS:819511690726866986>', initial: 'NSO', tracker: '⚪'};
+			return {color: 'Grey', decal: '<:NS:819511690726866986>', initial: 'NSO', tracker: '⚪'};
 	}
-}
-
-module.exports = {
-	servers: servers,
-	continents: continents,
-	continentNames: continentNames,
-	serverNames: serverNames,
-	serverIDs: serverIDs,
-	badQuery: badQuery,
-	censusRequest: censusRequest,
-	localeNumber: localeNumber,
-	faction: faction
 }
