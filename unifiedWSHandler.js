@@ -4,7 +4,7 @@
  * @typedef {import('discord.js').Client} discord.Client
  */
 
-import {EmbedBuilder, PermissionsBitField} from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { send } from './messageHandler.js';
 import { unsubscribeAll } from './subscriptions.js';
 import { initializeConfig } from './commands/config.js';
@@ -56,44 +56,23 @@ async function logEvent(payload, environment, discordClient){
             for (let row of result.rows){
                 discordClient.channels.fetch(row.channel)
                     .then(resChann => {
-                        if(typeof(resChann.guild) !== 'undefined'){
-                            if(resChann.permissionsFor(resChann.guild.members.me).has([PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.EmbedLinks])){
-                                send(resChann, {embeds: [sendEmbed]}, "Log event")
-                                .then(messageId => {
-                                    if(messageId != -1 && row.autodelete == true){
-                                        const in5minutes = new Date((new Date()).getTime() + 300000);
-                                        query("INSERT INTO toDelete (channel, messageID, timeToDelete) VALUES ($1, $2, $3)", [row.channel, messageId, in5minutes])
-                                            .catch(err => {console.log(err);});
-                                    }
-                                });
-                                
+                        send(resChann, {embeds: [sendEmbed]}, "Log event")
+                        .then(messageId => {
+                            if(messageId !== -1 && row.autodelete === true){
+                                const in5minutes = new Date((new Date()).getTime() + 300000);
+                                query("INSERT INTO toDelete (channel, messageID, timeToDelete) VALUES ($1, $2, $3)", [row.channel, messageId, in5minutes])
+                                    .catch(err => {console.log(err);});
                             }
-                            else{
+                            else if (messageId === -1) {
                                 unsubscribeAll(row.channel);
                                 console.log('Unsubscribed from '+row.channel);
-                            } 
-                        }
-                        else{ // DM
-                            send(resChann, {embeds: [sendEmbed]}, "Log event")
-                            .then(messageId => {
-                                if(messageId != -1 && row.autodelete === true){
-                                    const in5minutes = new Date((new Date()).getTime() + 30000);
-                                    query("INSERT INTO toDelete (channel, messageID, timeToDelete) VALUES ($1, $2, $3)", [row.channel, messageId, in5minutes])
-                                        .catch(err => {console.log(err);});
-                                }
-                                else if(messageId == -1){
-                                    unsubscribeAll(row.channel);
-                                    console.log('Unsubscribed from '+row.channel);
-                                }
-                            })
-                        }                        
+                            }
+                        });
                     })
                     .catch(error => {
-                        if(typeof(error.code) !== 'undefined'){
-                            if(error.code == 10003){ //Unknown channel error, thrown when the channel is deleted
-                                unsubscribeAll(row.channel);
-                                console.log('Unsubscribed from '+row.channel);
-                            }
+                        if(error.code === 10003){ //Unknown channel error, thrown when the channel is deleted
+                            unsubscribeAll(row.channel);
+                            console.log('Unsubscribed from '+row.channel);
                         }
                         else{
                             console.log(error);
@@ -268,65 +247,32 @@ async function alertEvent(payload, environment, discordClient){
                 }
                 discordClient.channels.fetch(row.channel)
                     .then(resChann => {
-                        if(typeof(resChann.guild) !== 'undefined'){
-                            if(resChann.permissionsFor(resChann.guild.members.me).has([PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.EmbedLinks])){
-                                send(resChann, {embeds: [sendEmbed]}, "Alert notification")
-                                .then(messageId => {
-                                    if(messageId != -1 && trackedAlerts.indexOf(Number(payload.metagame_event_id)) > -1){
-                                        query("INSERT INTO alertMaintenance (alertID, messageID, channelID) VALUES ($1, $2, $3);", [`${payload.world_id}-${payload.instance_id}`, messageId, row.channel])
-                                            .catch(err => {console.log(err);});
-                                    }
-                                    if(messageId != -1 && row.autodelete === true){
-                                        const in50minutes = new Date((new Date()).getTime() + 3000000);
-                                        const in95minutes = new Date((new Date()).getTime() + 5700000);
-                                        if(['Indar', 'Hossin', 'Esamir', 'Amerish', 'Oshur'].includes(continent) && response.name.indexOf("Unstable Meltdown") == -1){
-                                            query("INSERT INTO toDelete (channel, messageID, timeToDelete) VALUES ($1, $2, $3)", [row.channel, messageId, in95minutes])
-                                            .catch(err => {console.log(err);});
-                                        }
-                                        else{
-                                            query("INSERT INTO toDelete (channel, messageID, timeToDelete) VALUES ($1, $2, $3)", [row.channel, messageId, in50minutes])
-                                            .catch(err => {console.log(err);});
-                                        }    
-                                    }
-                                });
+                        send(resChann, {embeds: [sendEmbed]}, "Alert notification")
+                        .then(messageId => {
+                            if(messageId !== -1 && trackedAlerts.indexOf(Number(payload.metagame_event_id)) > -1){
+                                query("INSERT INTO alertMaintenance (alertID, messageID, channelID) VALUES ($1, $2, $3);", [`${payload.world_id}-${payload.instance_id}`, messageId, row.channel])
+                                    .catch(err => {console.log(err);});
                             }
-                            else{
+                            if(messageId !== -1 && row.autodelete === true){
+                                // Delete message in 50 minutes
+                                let timeToDelete = new Date((new Date()).getTime() + 3000000);
+                                if(['Indar', 'Hossin', 'Esamir', 'Amerish', 'Oshur'].includes(continent) && !response.name.includes("Unstable Meltdown")){
+                                    // Delete messages in 95 minutes
+                                    timeToDelete = new Date((new Date()).getTime() + 5700000);
+                                } 
+                                query("INSERT INTO toDelete (channel, messageID, timeToDelete) VALUES ($1, $2, $3)", [row.channel, messageId, timeToDelete])
+                                .catch(err => {console.log(err);});
+                            }
+                            else if(messageId === -1) {
                                 unsubscribeAll(row.channel);
                                 console.log('Unsubscribed from '+row.channel);
-                            } 
-                        }
-                        else{ // DM
-                            send(resChann, {embeds: [sendEmbed]}, "Alert notification")
-                            .then(messageId => {
-                                if(messageId != -1 && trackedAlerts.indexOf(Number(payload.metagame_event_id)) > -1){
-                                    query("INSERT INTO alertMaintenance (alertID, messageID, channelID) VALUES ($1, $2, $3);", [`${payload.world_id}-${payload.instance_id}`, messageId, row.channel])
-                                        .catch(err => {console.log(err);})
-                                }
-                                if(messageId != -1 && row.autodelete === true){
-                                    const in50minutes = new Date((new Date()).getTime() + 3000000);
-                                    const in95minutes = new Date((new Date()).getTime() + 5700000);
-                                    if(['Indar', 'Hossin', 'Esamir', 'Amerish', 'Oshur'].includes(continent) && response.name.indexOf("Unstable Meltdown") == -1){
-                                        query("INSERT INTO toDelete (channel, messageID, timeToDelete) VALUES ($1, $2, $3)", [row.channel, messageId, in95minutes])
-                                        .catch(err => {console.log(err);});
-                                    }
-                                    else{
-                                        query("INSERT INTO toDelete (channel, messageID, timeToDelete) VALUES ($1, $2, $3)", [row.channel, messageId, in50minutes])
-                                        .catch(err => {console.log(err);});
-                                    }    
-                                }
-                                else if(messageId == -1){
-                                    unsubscribeAll(row.channel);
-                                    console.log('Unsubscribed from '+row.channel);
-                                }
-                            });
-                        } 
+                            }
+                        });
                     })
                     .catch(error => {
-                        if(typeof(error.code) !== 'undefined'){
-                            if(error.code == 10003){ //Unknown channel error, thrown when the channel is deleted
-                                unsubscribeAll(row.channel);
-                                console.log('Unsubscribed from '+row.channel);
-                            }
+                        if(error.code == 10003){ //Unknown channel error, thrown when the channel is deleted
+                            unsubscribeAll(row.channel);
+                            console.log('Unsubscribed from '+row.channel);
                         }
                         else{
                             console.log(error);
@@ -425,24 +371,17 @@ async function baseEvent(payload, environment, discordClient){
         }
         for (let row of result.rows){
             discordClient.channels.fetch(row.channel).then(resChann => {
-                if(typeof(resChann.guild) !== 'undefined'){
-                    if(resChann.permissionsFor(resChann.guild.members.me).has([PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.EmbedLinks])){
-                        send(resChann, {embeds: [sendEmbed]}, "Base capture event");
-                    }
-                    else{
+                send(resChann, {embeds: [sendEmbed]}, "Base capture event")
+                .then( messageId => {
+                    if (messageId === -1) {
                         unsubscribeAll(row.channel);
                         console.log('Unsubscribed from '+row.channel);
                     }
-                }
-                else{ // DM
-                    send(resChann, {embeds: [sendEmbed]}, "Base capture event");
-                }
+                });
             }).catch(error => {
-                if(typeof(error.code) !== 'undefined'){
-                    if(error.code == 10003){ //Unknown channel error, thrown when the channel is deleted
-                        unsubscribeAll(row.channel);
-                        console.log('Unsubscribed from '+row.channel);
-                    }
+                if(error.code == 10003){ //Unknown channel error, thrown when the channel is deleted
+                    unsubscribeAll(row.channel);
+                    console.log('Unsubscribed from '+row.channel);
                 }
                 else{
                     console.log(error);

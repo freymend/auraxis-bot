@@ -8,7 +8,6 @@ import {territoryInfo} from './commands/territory.js';
 import {serverIDs, serverNames, servers, continents} from './utils.js';
 import {send} from './messageHandler.js';
 import {unsubscribeAll} from './subscriptions.js';
-import {PermissionsBitField} from 'discord.js';
 import {update} from './commands/tracker.js';
 import query from './db/index.js';
 
@@ -34,21 +33,10 @@ const contIDs = {
 async function notifyUnlock(cont, server, channelID, discordClient){
 	try{
 		const channel = await discordClient.channels.fetch(channelID);
-		if(typeof(channel.guild) !== 'undefined'){
-			if(channel.permissionsFor(channel.guild.members.me).has([PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.EmbedLinks])){
-				await send(channel, `${cont} on ${server} is now open!`, "Continent unlock");
-			}
-			else{
-				unsubscribeAll(channelID);
-				console.log(`Unsubscribed from ${channelID}`);
-			}
-		}
-		else{
-			const res = await send(channel, `${cont} on ${server} is now open!`, "Continent unlock");
-			if(res == -1){
-				unsubscribeAll(channelID);
-				console.log(`Unsubscribed from ${channelID}`);
-			}
+		const res = await send(channel, `${cont} on ${server} is now open!`, "Continent unlock");
+		if(res === -1){
+			unsubscribeAll(channelID);
+			console.log(`Unsubscribed from ${channelID}`);
 		}
 	}
 	catch(err){

@@ -13,13 +13,12 @@ import { ChannelType, PermissionsBitField } from 'discord.js';
  * @param {Channel} channel - the channel to send the message to
  * @param {Message | string | MessageOptions} message - the message to send
  * @param {string} context - the context of the error
- * @param {boolean} embed - whether or not the message is an embed
  * @returns the ID of the message sent. If the bot does not have permission will return -1
  */
-export async function send(channel, message, context="default", embed=false){
-    if(embed && channel.type !== ChannelType.DM && !channel.permissionsFor(channel.guild.members.me).has(PermissionsBitField.Flags.EmbedLinks)){
+export async function send(channel, message, context="default"){
+    if(channel.type !== ChannelType.DM && !channel.permissionsFor(channel.guild.members.me).has([PermissionsBitField.Flags.EmbedLinks, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ViewChannel])){
         try {
-            await channel.send('Please grant the "Embed Links" permission to use this command');
+            await channel.send('Please grant the `Embed Links` and `View Channel` permission to use this command');
         }
         catch (err) {
             console.log(`Error sending embed permission message in context: ${context}`);
@@ -45,20 +44,4 @@ export async function send(channel, message, context="default", embed=false){
         }
     }
     return -1;
-}
-
-/**
- * Logs errors where which function the error occured in
- * @param {Channel} channel - the channel to send the error message to
- * @param {string} err - the error to send
- * @param {string} context - the context of the error 
- */
-export function handleError(channel, err, context="default"){
-    if(typeof(err) == 'string'){
-        send(channel, err, context);
-    }
-    else{
-        console.log(`Error returned from function in context: ${context}`);
-        console.log(err);
-    }
 }

@@ -5,7 +5,6 @@
  * @module twitterListener
  * @typedef {import('discord.js').ChannelManager} discord.channels
  */
-import { ChannelType, PermissionsBitField } from 'discord.js';
 import { fetch } from 'undici';
 import { send } from './messageHandler.js';
 import { unsubscribeAll } from './subscriptions.js';
@@ -128,16 +127,11 @@ async function postMessage(channels, jsonObj){
 	result.rows.forEach(async (row) => {
 		try {
 			const resChann = await channels.fetch(row.channel);
-			if (resChann.type === ChannelType.DM){
-				send(resChann, url, "Twitter message");
-			}
-			else if(resChann.permissionsFor(resChann.guild.members.me).has([PermissionsBitField.Flags.SendMessages,PermissionsBitField.Flags.EmbedLinks])){
-				send(resChann, `${baseText}${url}`, "Twitter message");
-			}
-			else{
-				unsubscribeAll(row.channel);
-				console.log(`Unsubscribed from ${row.channel}`);
-			}
+				const res = await send(resChann, `${baseText}${url}`, "Twitter message");
+				if (res === -1) {
+					unsubscribeAll(row.channel);
+					console.log(`Unsubscribed from ${row.channel}`);
+				}
 		} 
 		catch (error) {
 			if(error?.code == 10003){ //Unknown channel error, thrown when the channel is deleted

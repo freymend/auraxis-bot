@@ -289,7 +289,7 @@ export async function execute(interaction, locale) {
  */
 async function createServer(channel, serverName){
 	const resEmbed = await serverStatus(serverIDs[serverName]);
-	const messageID = await send(channel, {embeds: [resEmbed]}, "Create server dashboard", true);
+	const messageID = await send(channel, {embeds: [resEmbed]}, "Create server dashboard");
 	if(messageID == -1){
 		throw "Error creating dashboard, please check that the bot has permission to post in this channel.";
 	}
@@ -310,7 +310,7 @@ async function createServer(channel, serverName){
 async function createOutfit(channel, oTag, platform){
 	const oInfo = await onlineInfo(oTag, platform);
 	const resEmbed = await outfitStatus(oInfo.outfitID, platform);
-	const messageID = await send(channel, {embeds: [resEmbed]}, "Create outfit dashboard", true);
+	const messageID = await send(channel, {embeds: [resEmbed]}, "Create outfit dashboard");
 	if(messageID == -1){
 		throw "Error creating dashboard, please check that the bot has permission to post in this channel.";
 	}
