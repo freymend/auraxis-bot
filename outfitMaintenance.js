@@ -3,8 +3,8 @@
  * @module outfitMaintenance
  */
 
-import { censusRequest } from './utils.js';
 import query from './db/index.js';
+import { censusOutfitIdentity } from './requests.js';
 
 /**
  * `platform`: `environment`
@@ -36,7 +36,7 @@ export async function update(){
 	}
 	for(const id of outfitIDs){
 		try{
-			const response = await censusRequest(platformToEnvironment[id[1]], 'outfit_list', `/outfit/${id[0]}`);
+			const response = await censusOutfitIdentity(platformToEnvironment[id[1]], id[0])
 			if(response.length == 0){
 				continue;
 			}

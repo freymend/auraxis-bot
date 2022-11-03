@@ -15,7 +15,8 @@ import decals from '../static/decals.json' assert {type: 'json'};;
 import sanction from '../static/sanction.json' assert {type: 'json'};
 import { fetch } from 'undici';
 import i18n from 'i18n';
-import { serverNames, badQuery, censusRequest, localeNumber, faction, platforms } from '../utils.js';
+import { serverNames, badQuery, localeNumber, faction, platforms } from '../utils.js';
+import { censusWeaponName, censusASP, censusAuraxiums, censusCharacterOverview, censusCharacterRecentStats, censusVehicleName } from '../requests.js';
 
 /**
  * Get basic character information
@@ -26,7 +27,7 @@ import { serverNames, badQuery, censusRequest, localeNumber, faction, platforms 
  */
 async function basicInfo(cName, platform){
     // Main function for character lookup.  Pulls most stats and calls other functions for medals/top weapon info
-    let response =  await censusRequest(platform, 'character_list', `/character?name.first_lower=${cName}&c:resolve=outfit_member_extended,online_status,world,stat_history,weapon_stat_by_faction,weapon_stat&c:join=title,characters_stat^list:1`);
+    let response =  await censusCharacterOverview(cName, platform);
     if(response.length == 0){
         throw `${cName} not found`;
     }
@@ -203,7 +204,7 @@ async function basicInfo(cName, platform){
  * @returns true if character is ASP
  */
 async function checkASP(cName, platform){
-    let response = await censusRequest(platform, 'character_list', `/character?name.first_lower=${cName}&c:resolve=item_full&c:lang=en`);
+    let response = await censusASP(platform, cName);
     let data = response[0];
     let aspTitle = false;
     for (const item of data.items){
@@ -258,7 +259,7 @@ export async function getWeaponName(ID, platform){
     if(typeof(weapons[ID]) !== 'undefined'){
         return weapons[ID].name;
     }
-    let response = await censusRequest(platform, 'item_list', `/item/${ID}`)
+    const response = await censusWeaponName(platform, ID);
     if(response.length==1){
         return response.item_list[0].name.en;
     }
@@ -283,7 +284,7 @@ export async function getWeaponName(ID, platform){
  */
 async function getAuraxiumCount(cName, platform){
     // Calculates the number of Auraxium medals a specified character has
-    let response = await censusRequest(platform, 'character_list', `/character?name.first_lower=${cName}&c:join=characters_achievement^list:1^outer:0^hide:character_id%27earned_count%27start%27finish%27last_save%27last_save_date%27start_date(achievement^terms:repeatable=0^outer:0^show:name.en%27description.en)`);
+    let response = await censusAuraxiums(cName, platform);
     let medalCount = 0;
     if(typeof(response) === 'undefined' || typeof(response[0]) === 'undefined'){
         return "Error"; // TODO: Verify if resolve is correct
@@ -314,7 +315,7 @@ async function getAuraxiumCount(cName, platform){
  * @throws if unable to get stats
  */
 async function recentStatsInfo(cID, platform, days){
-    const response = await censusRequest(platform, 'character_list', `/character/${cID}?c:resolve=stat_history&c:join=title,characters_stat^list:1`);
+    const response = await censusCharacterRecentStats(platform, cID);
     const data = response[0];
     let resObj = {
         name: data.name.first,
@@ -666,7 +667,7 @@ export async function getVehicleName(ID, platform){
     if(typeof(vehicles[ID]) !== 'undefined'){
         return vehicles[ID].name;
     }
-    let response = await censusRequest(platform, 'vehicle_list', `/vehicle/${ID}`);
+    let response = await censusVehicleName(platform, ID);
     if(response.returned==1){
         return response.vehicle_list[0].name.en;
     }

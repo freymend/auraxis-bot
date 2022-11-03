@@ -11,8 +11,9 @@ import { initializeConfig } from './commands/config.js';
 import { territoryInfo } from './commands/territory.js';
 import alerts from './static/alerts.json' assert {type: 'json'};
 import bases from './static/bases.json' assert {type: 'json'};
-import {serverNames, censusRequest, faction} from './utils.js';
+import {serverNames, faction} from './utils.js';
 import query from './db/index.js';
+import { censusCaptureContribution, censusCharacterOutfit, censusFacility, censusMetaGameEvent, censusOnlineMembers } from './requests.js';
 
 /**
  * @example
@@ -34,7 +35,7 @@ const environmentToPlatform = {
  * @throws if there are error in logEvent
  */
 async function logEvent(payload, environment, discordClient){
-    let response = await censusRequest(environment, 'character_list', `/character/${payload.character_id}?c:resolve=outfit_member`);
+    let response = await censusCharacterOutfit(environment, payload.character_id);
     let platform = environmentToPlatform[environment];
     let playerEvent = payload.event_name.substring(6);
     if(response[0].outfit_member != null){
@@ -119,7 +120,7 @@ async function alertInfo(payload, environment){
         };
         return resObj;
     }
-    let response = await censusRequest(environment, "metagame_event_list", `/metagame_event/${payload.metagame_event_id}`);
+    let response = await censusMetaGameEvent(environment, payload.metagame_event_id);
     if(response.length == 0 || typeof(response) === 'undefined' || typeof(response[0]) == 'undefined'){
         console.log("Unable to find alert info for id "+payload.metagame_event_id);
         throw "Alert notification error";
@@ -462,7 +463,7 @@ async function baseEvent(payload, environment, discordClient){
  */
 async function captureContributions(outfitID, baseID, timestamp, platform){
     try{
-        const response = await censusRequest(platform, 'outfit_list', `/outfit/${outfitID}?c:resolve=member_online_status`);
+        const response = await censusOnlineMembers(platform, undefined, outfitID);
         let contributions = [];
         let online = [];
         if(response[0]?.members[0].online_status == "service_unavailable"){
@@ -476,7 +477,8 @@ async function captureContributions(outfitID, baseID, timestamp, platform){
         // Just waiting to make sure all values fill in in the characters_event collection
         await  new Promise(resolve => setTimeout(resolve, 2000));
         const onlineEvents = await Promise.allSettled(Array.from(online, x => 
-            censusRequest(platform, 'characters_event_list', `characters_event?id=${x}&type=FACILITY_CHARACTER&c:resolve=character_name`)));
+            censusCaptureContribution(platform, x))
+        );
         for(const event of onlineEvents){
             if(event.status == "fulfilled" && event.value[0]?.facility_id == baseID && event.value[0].timestamp == timestamp){
                 contributions.push(event.value[0]?.character.name.first);
@@ -522,7 +524,7 @@ async function baseInfo(facilityID, environment){
         return bases[facilityID];
     }
     else{ //backup web request
-        let response = await censusRequest(environment, "map_region_list", `/map_region?facility_id=${facilityID}`);
+        let response = await censusFacility(environment, facilityID);
         if(response.length == "0"){
             throw `No result for FacilityID: ${facilityID}`;
         }

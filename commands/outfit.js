@@ -5,10 +5,11 @@
  * @typedef {import('discord.js').ButtonInteraction} ButtonInteraction
  */
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from 'discord.js';
-import { serverNames, badQuery, censusRequest, localeNumber, faction, platforms } from '../utils.js';
+import { serverNames, badQuery, localeNumber, faction, platforms } from '../utils.js';
 import bases from '../static/bases.json' assert {type: 'json'};
 import i18n from 'i18n';
 import query from '../db/index.js';
+import { censusOutfitActivityLevels } from '../requests.js';
 
 /**
  * Get basic information about an outfit, online members, owned bases etc.
@@ -19,11 +20,8 @@ import query from '../db/index.js';
  * @throws if outfit could not be found or if there was an error gathering outfit information
  */
 async function basicInfo(oTag, platform, oID, locale="en-US"){
-	let url = `/outfit?alias_lower=${oTag}&c:resolve=member_online_status&c:join=character^on:leader_character_id^to:character_id&c:join=character^on:members.character_id^to:character_id^hide:certs&c:join=characters_world^on:leader_character_id^to:character_id`;
-	if(oID != null){
-		url = `/outfit/${oID}?c:resolve=member_online_status&c:join=character^on:leader_character_id^to:character_id&c:join=character^on:members.character_id^to:character_id^hide:certs&c:join=characters_world^on:leader_character_id^to:character_id`;
-	}
-	let response = await censusRequest(platform, 'outfit_list', url);
+	const response = await censusOutfitActivityLevels(platform, oID, oTag);
+	console.log(response);
 	if(response.length == 0){
 		throw i18n.__mf({phrase: '{name} not found', locale: locale}, {name: oTag});
 	}

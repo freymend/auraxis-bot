@@ -4,9 +4,10 @@
  * @typedef {import('discord.js').ChatInputCommandInteraction} ChatInteraction
  */
 
-import { allServers, censusRequest, serverIDs, serverNames } from'../utils.js';
+import { allServers, serverIDs, serverNames } from'../utils.js';
 import { EmbedBuilder } from'discord.js';
 import i18n from'i18n';
+import { censusLeaderboard } from '../requests.js';
 
 /**
  * Get the right URL extension for the PS2 census API
@@ -105,8 +106,7 @@ export async function execute(interaction, locale='en-US'){
 	else if(server == 'ceres'){
 		platform = 'ps2ps4eu:v2';
 	}
-	const data = await censusRequest(platform, 'leaderboard_list', constructExtension(name, period, serverIDs[server], limit));
-
+	const data = await censusLeaderboard(platform, name, period, server, limit);
 	const resEmbed = new EmbedBuilder();
 	if(server == undefined){
 		resEmbed.setTitle(i18n.__mf({phrase: "{period} {type} leaderboard", locale: locale}, 

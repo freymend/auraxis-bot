@@ -5,8 +5,9 @@
  */
 
 import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
-import { censusRequest, badQuery, faction, platforms } from '../utils.js';
+import { badQuery, faction, platforms } from '../utils.js';
 import i18n from 'i18n';
+import { censusASP } from '../requests.js';
 
 /**
  * Get basic information about a character's ASP unlocks and BR
@@ -17,7 +18,7 @@ import i18n from 'i18n';
  * @throw if `cName` is not a valid character name, are NSO are have no ASP
  */
 async function basicInfo(cName, platform, locale="en-US"){
-	let response = await censusRequest(platform, 'character_list', `/character?name.first_lower=${cName}&c:resolve=item_full&c:lang=en`);
+	let response = await censusASP(platform, cName);
 	if(response.length == 0){
 		throw i18n.__mf({phrase: "{name} not found", locale: locale}, {name: cName});
 	}

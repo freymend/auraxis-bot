@@ -6,8 +6,9 @@
  */
 
 import { EmbedBuilder } from 'discord.js';
-import { badQuery, censusRequest, faction, platforms} from '../utils.js';
+import { badQuery, faction, platforms} from '../utils.js';
 import i18n from 'i18n';
+import { censusOnlineMembers, censusOutfitRanks, censusOutfitLeader } from '../requests.js';
 
 /**
  * Get who is online in `oTag`
@@ -23,7 +24,7 @@ export async function onlineInfo(oTag, platform, outfitID = null, locale = "en-U
 	if(outfitID != null){
 		outfitSearch = `outfit_id=${outfitID}`;
 	}
-	const outfit = (await censusRequest(platform, 'outfit_list', `outfit?${outfitSearch}&c:resolve=rank`))[0];
+	const outfit = (await censusOutfitRanks(platform, outfitID, oTag))[0];
 	if(outfit === undefined){
 		throw `${oTag} not found`;
 	}
@@ -33,7 +34,7 @@ export async function onlineInfo(oTag, platform, outfitID = null, locale = "en-U
 	 * Source for query: https://github.com/leonhard-s/auraxium/wiki/Census-API-Primer#example-joins
 	 */
 	const url = `outfit?${outfitSearch}&c:join=outfit_member^inject_at:members^show:character_id%27rank^outer:0^list:1(character^show:name.first^inject_at:character^outer:0^on:character_id(characters_online_status^inject_at:online_status^show:online_status^outer:0(world^on:online_status^to:world_id^outer:0^show:world_id^inject_at:ignore_this))`;
-	const data = (await censusRequest(platform, 'outfit_list', url))[0];
+	const data = (await censusOnlineMembers(platform, oTag, outfitID))[0];
 	let urlBase = 'https://ps2.fisu.pw/player/?name=';
 	if(platform == 'ps2ps4us:v2'){
 		urlBase = 'https://ps4us.ps2.fisu.pw/player/?name=';
@@ -41,7 +42,7 @@ export async function onlineInfo(oTag, platform, outfitID = null, locale = "en-U
 	else if(platform == 'ps2ps4eu:v2'){
 		urlBase = 'https://ps4eu.ps2.fisu.pw/player/?name=';
 	}
-	const leader = (await censusRequest(platform, 'character_list', `/character?character_id=${outfit.leader_character_id}&c:resolve=world`))[0];
+	const leader = (await censusOutfitLeader(platform, outfit.leader_character_id))[0];
 	/**
 	 * @typedef {Object} OnlineOutfit
 	 * @property {string} name - outfit name

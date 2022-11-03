@@ -3,8 +3,6 @@
  * @module utils
  */
 
-import { fetch } from 'undici';
-
 /**
  * All PC servers except for Jaeger
  */
@@ -156,65 +154,6 @@ export const serverIDs = {
 export function badQuery(input){
 	// This is its own function so a single list of disallowed characters can be maintained
 	return input.match(/[<@>!+&?%*#$^()_:/\\,`~[\]{}|+=]/g) !== null;
-}
-
-/**
- * Send a request to the PS2 census API
- * @param {string} platform - which environment to request, eg. ps2:v2, ps2ps4us:v2, or ps2ps4eu:v2
- * @param {string} key - what information you want to get from the API
- * @param {string} extension - the URL extension to request
- * @returns results of the request encoded in JSON
- * @throws if there are Census API errors
- */
-export async function censusRequest(platform, key, extension, retry = 2){
-	// Places boilerplate error checking in one location and standardizes it
-	// Allows for easily changing https to http if there is an error
-	const uri = `https://census.daybreakgames.com/s:${process.env.serviceID}/get/${platform}/${extension}`;
-	if (retry === 0) {
-		return;
-	}
-	try{
-		const request = await fetch(uri);
-		if(!request.ok) {
-			throw `Census API unreachable: ${request.status}`;
-		}
-		const response = await request.json();
-		if(typeof(response.error) !== 'undefined'){
-			if(response.error == 'service_unavailable'){
-				throw "Census API currently unavailable";
-			}
-			if(typeof(response.error) === 'string'){
-				throw `Census API error: ${response.error}`;
-			}
-			throw response.error;
-		}
-		if(typeof(response.errorCode) !== 'undefined'){
-			if(response.errorCode == "SERVER_ERROR" && response.errorMessage){
-				throw `Census API server error: ${response.errorMessage}`;
-			}
-			throw `Census API error: ${response.errorCode}`;
-		}
-		if(typeof(response[key]) === 'undefined' || !Array.isArray(response[key])){
-			throw "Census API error: undefined response";
-		}
-		return response[key];
-	}
-	catch(err){
-		if(typeof(err) === 'string'){
-			throw err;
-		}
-		if(err instanceof SyntaxError){
-			// .json() occurs when census gets redirected to https://www.daybreakgames.com/home
-			throw "Census API unavailable: Redirect";
-		}
-		// fetch() only throws TypeErrors https://developer.mozilla.org/en-US/docs/Web/API/fetch#exceptions
-		// Due to how finicky the census and fetch() not retrying on error we use recurion to retry the request
-		const request = censusRequest(platform, key, extension, retry - 1);
-		if (request !== undefined) {
-			return request;
-		}
-		throw `Census API error: ${err.cause.code}`;
-	}
 }
 
 /**

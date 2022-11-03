@@ -5,10 +5,11 @@
  * @typedef {import('discord.js').ChatInputCommandInteraction} ChatInteraction
  */
 
-import { censusRequest, faction, platforms } from '../utils.js';
+import { faction, platforms } from '../utils.js';
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from 'discord.js';
 import directives from '../static/directives.json' assert {type: "json"};
 import i18n from 'i18n';
+import { censusCharacterProfile, censusDirectives } from '../requests.js';
 
 /**
  * Get the list of completed directives for a character
@@ -19,12 +20,12 @@ import i18n from 'i18n';
  * @throws if `cName` is not a valid character name
  */
 async function getDirectiveList(cName, platform, locale="en-US"){
-	let nameResponse = await censusRequest(platform, 'character_list', `/character?name.first_lower=${cName}`);
+	let nameResponse = await censusCharacterProfile(platform, cName);
 	if(nameResponse.length == 0){
 		throw i18n.__mf({phrase: "{name} not found", locale: locale}, {name: cName});
 	}
 	const characterId = nameResponse[0].character_id;
-	let response = await censusRequest(platform, 'characters_directive_tree_list', `characters_directive_tree?character_id=${characterId}&c:limit=500`);
+	let response = await censusDirectives(platform, characterId);
 	let directiveList = [];
 	for(const dir of response){
 		if(dir.completion_time != 0){

@@ -6,10 +6,11 @@
  */
 
 import { EmbedBuilder } from 'discord.js';
-import { censusRequest, localeNumber, faction, platforms } from '../utils.js';
+import { localeNumber, faction, platforms } from '../utils.js';
 import vehicles from '../static/parsedVehicles.json' assert {type: 'json'};
 import { getWeaponName } from './character.js';
 import i18n from 'i18n';
+import { censusCharacterVehicleStats } from '../requests.js';
 
 /**
  * Get a overview of a characters stats with a vechicle
@@ -20,7 +21,7 @@ import i18n from 'i18n';
  * @throws if cannot find character, no vehicle found, or if the character has never used the vehicle
  */
 async function vehicleOverview(cName, vehicleID, platform){
-	const response = await censusRequest(platform, 'character_list', `/character?name.first_lower=${cName.toLowerCase()}&c:resolve=weapon_stat_by_faction,weapon_stat`);
+	const response = await censusCharacterVehicleStats(platform, cName);
 	if(response.length == 0){
 		throw `${cName} not found`;
 	}

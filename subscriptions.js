@@ -5,10 +5,11 @@
  */
 
 import { initializeConfig } from './commands/config.js';
-import { censusRequest, badQuery, faction } from './utils.js';
+import { badQuery, faction } from './utils.js';
 import { ChannelType, PermissionsBitField } from 'discord.js';
 import i18n from 'i18n';
 import query from './db/index.js';
+import { censusOutfitProfile } from './requests.js';
 
 /**
  * Case insensitive way of getting server names
@@ -44,7 +45,7 @@ function standardizeName(server){
  * @throws if `tag` is not a valid outfit tag
  */
 async function outfitInfo(tag, platform){
-    const response = await censusRequest(platform, 'outfit_list', `/outfit?alias_lower=${tag.toLowerCase()}&c:join=character^on:leader_character_id^to:character_id`);
+    const response = await censusOutfitProfile(platform, tag);
     if(typeof(response[0]) != undefined && response[0]){
         let resObj = {
             ID: response[0].outfit_id,

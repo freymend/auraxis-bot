@@ -9,10 +9,11 @@
 import { EmbedBuilder } from 'discord.js';
 import weaponsJSON from '../static/weapons.json' assert {type: 'json'};
 import sanction from '../static/sanction.json' assert {type: 'json'};
-import { badQuery, censusRequest, localeNumber, faction, platforms } from '../utils.js';
+import { badQuery, localeNumber, faction, platforms } from '../utils.js';
 import i18n from 'i18n';
 
 import { character } from './character.js';
+import { censusCharacterWeaponStats } from '../requests.js';
 
 /**
  * Get weapon name and id
@@ -136,7 +137,7 @@ export async function partialMatches(interaction){
  * @throws if `cName` is not a valid character or `wName` is not a valid weapon
  */
 async function characterInfo(cName, wName, platform, locale="en-US"){
-	let response =  await censusRequest(platform, 'character_list', `/character?name.first_lower=${cName}&c:resolve=weapon_stat_by_faction,weapon_stat`);
+	let response =  await censusCharacterWeaponStats(platform, cName);
 	if(response.length == 0){
 		throw i18n.__mf({phrase: "{name} not found", locale: locale}, {name: cName});
 	}

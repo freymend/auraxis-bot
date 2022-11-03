@@ -5,10 +5,11 @@
  */
 
 import { ApplicationCommandOptionType, EmbedBuilder } from 'discord.js';
-import { serverNames, serverIDs, censusRequest, continents, localeNumber, faction, allServers } from '../utils.js';
+import { serverNames, serverIDs, continents, localeNumber, faction, allServers } from '../utils.js';
 import ignoredRegions from '../static/ignoredRegions.json' assert {type: 'json'};
 import i18n from 'i18n';
 import query from '../db/index.js';
+import { censusTerritories } from '../requests.js';
 
 /**
  * Used to get the correct fisu world control URL
@@ -83,7 +84,7 @@ export async function territoryInfo(serverID){
     else if(serverID == 2000){
         platform = 'ps2ps4eu:v2';
     }
-    let response = await censusRequest(platform, 'map_list', `/map/?world_id=${serverID}&zone_ids=2,4,6,8,14,344`);
+    const response = await censusTerritories(platform, serverID);
     if(response.length < 3){
         throw "API response missing continents";
     }

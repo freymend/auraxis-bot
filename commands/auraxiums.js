@@ -5,10 +5,11 @@
  * @typedef {import('discord.js').MessageComponentInteraction} ButtonInteraction
  */
 
-import { censusRequest, faction, localeNumber, platforms } from '../utils.js';
+import { faction, localeNumber, platforms } from '../utils.js';
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 import sanction from '../static/sanction.json' assert {type: 'json'};
 import i18n from 'i18n';
+import { censusAuraxiums } from '../requests.js';
 
 /**
  * Get a list of a character's Auraxium medals
@@ -20,7 +21,7 @@ import i18n from 'i18n';
  */
 async function getAuraxiumList(cName, platform, locale='en-US'){
 	// Calculates the number of Auraxium medals a specified character has
-	let response = await censusRequest(platform, 'character_list', `/character?name.first_lower=${cName}&c:join=characters_achievement^list:1^outer:0^hide:character_id%27earned_count%27start%27finish%27last_save%27last_save_date%27start_date(achievement^terms:repeatable=0^outer:0^show:name.en%27description.en)&c:resolve=weapon_stat_by_faction`);
+	let response = await censusAuraxiums(cName, platform);
 	let medalList = [];
 	let confirmedMedals = [];
 	let possibleMedals = [];

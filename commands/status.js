@@ -4,8 +4,8 @@
  * @typedef {import('discord.js').ChatInputCommandInteraction} ChatInteraction
  */
 import { EmbedBuilder } from 'discord.js';
-import { censusRequest } from '../utils.js';
 import i18n from 'i18n';
+import { censusStatus } from '../requests.js';
 
 /**
  * Get the population status of each server
@@ -13,7 +13,7 @@ import i18n from 'i18n';
  * @throws if there are API errors
  */
 async function info(){	
-	const data = await censusRequest('global', 'game_server_status_list', '/game_server_status?game_code=ps2&c:limit=100');
+	const data = await censusStatus();
 	if(data === undefined){
 		throw "API Error";
 	}
