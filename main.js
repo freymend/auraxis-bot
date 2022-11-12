@@ -13,12 +13,6 @@ import { readdirSync } from 'fs';
 import { join,  dirname } from 'path';
 import { fileURLToPath } from 'url';
 
-import { update as trackerUpdate} from './commands/tracker.js';
-import { update as dashboardUpdate } from './commands/dashboard.js'
-import { update as outfitUpdate } from './outfitMaintenance.js';
-import { update as alertUpdate } from './alertMaintenance.js';
-import { run as runDeleteMessages } from './deleteMessages.js';
-import { check as checkOpenContinents} from './openContinents.js';
 import { start as startListener } from './unifiedWSListener.js';
 import { init, connect, latestTweet } from './twitterListener.js';
 
